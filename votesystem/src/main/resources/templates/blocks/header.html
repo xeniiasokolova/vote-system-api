@@ -1,0 +1,36 @@
+<div th:fragment="header" class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <div class="col-md-3 mb-2 mb-md-0">
+            <a href="/account" class="d-inline-flex link-secondary text-decoration-none">
+                <h5><span th:text="${username}"></span></h5>
+            </a>
+        </div>
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <!-- Элемент навигации для остальных пользователей -->
+            <li>
+                <a href="/account" class="nav-link link-secondary px-2" th:text="#{account.personal}"></a>
+            </li>
+            <!-- Элемент навигации для администратора (ADMIN) -->
+            <li th:if="${userRole == 'ADMIN'}">
+                <a href="/users" class="nav-link link-secondary px-2" th:text="#{user.title}"></a>
+            </li>
+
+            <!-- Элемент навигации для всех пользователей -->
+            <li>
+                <a href="/restaurants" class="nav-link link-secondary px-2" th:text="#{restaurant.title}"></a>
+            </li>
+
+            <!-- Элемент навигации для администратора (ADMIN) -->
+            <li th:if="${userRole == 'ADMIN'}">
+                <a href="/votes" class="nav-link link-secondary px-2" th:text="#{dish.vote}"></a>
+            </li>
+
+        </ul>
+
+        <div class="col-md-3 text-end">
+            <button type="button" class="btn btn-secondary" th:text="#{app.logout}"
+                    onclick="window.location.href='/logout'"></button>
+        </div>
+    </header>
+</div>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:c="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+    <title th:text="#{restaurant.title}"></title>
+</head>
+<body>
+<div th:insert="blocks/header :: header"></div>
+
+
+<div class="container" align="center">
+    <form action="save" method="post">
+
+        <div class="py-2 text-center">
+            <h3 th:if="${dish.isNew()}" th:text="#{dish.add}"></h3>
+            <h3 th:unless="${dish.isNew()}" th:text="#{dish.edit}"></h3>
+        </div>
+
+        <div class="col-md-3">
+            <input type="hidden" class="form-control"
+                   id="id" name="id"
+                   placeholder="ID"
+                   th:value="${dish.id}" required="">
+        </div>
+
+        <div class="col-md-3">
+            <input type="hidden" class="form-control"
+                   id="restaurantid" name="restaurantid"
+                   placeholder="Restaurant ID"
+                   th:value="${dish.restaurant.id}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="name" name="name"
+                   th:placeholder="#{dish.name}"
+                   th:value="${dish.name}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="description" name="description"
+                   th:placeholder="#{dish.description}"
+                   th:value="${dish.description}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="price" name="price"
+                   th:placeholder="#{dish.price}"
+                   th:value="${dish.price}" required=""
+                   pattern="^\d+(?:[\.,]\d{1,2})?$"
+                   th:title="#{error.price}">
+        </div>
+
+        <div class="d-flex gap-2 justify-content-center py-2">
+            <button class="btn secondary d-inline-flex align-items-center"
+                    type="button" onclick="window.history.back()"
+                    th:text="#{common.cancel}">
+            </button>
+            <button class="btn btn-secondary d-inline-flex align-items-center"
+                    type="submit"
+                    th:text="#{common.save}">
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

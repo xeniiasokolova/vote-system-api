@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+
+    <title th:text="#{menu.name}"></title>
+
+    <style>
+        .error-message {
+            border: 2px solid rgba(241, 80, 80, 0.93);
+            padding: 10px;
+            background-color: rgba(250, 182, 192, 0.99);
+            text-align: center;
+        }
+
+        .success-message {
+            border: 2px solid rgba(241, 214, 80, 0.93);
+            padding: 10px;
+            background-color: rgba(250, 241, 182, 0.99);
+            text-align: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+    </style>
+    <div th:insert="blocks/modal :: #confirmVoteModal"></div>
+</head>
+<body>
+<div th:insert="blocks/header :: header"></div>
+
+
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading" th:text="#{menu.name}"></h1>
+        <h1 class="jumbotron-heading" th:text="${restaurantName}"></h1>
+    </div>
+</section>
+
+<div class="container" align="center">
+    <!-- Error if limited time ended -->
+    <div th:if="${voteError}" th:text="#{error.vote}"
+         class="py-2 alert alert-danger error-message"></div>
+
+    <div th:if="${infoVote}" th:text="#{${infoVote}}"
+         class="col-md-3 py-2 alert alert-danger success-message"></div>
+
+</div>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div th:each="dish : ${dishes}" class="col-md-4">
+                <div class="card mb-4 rounded-3 shadow-sm border-secondary">
+                    <div class="card-header py-3 text-bg-secondary border-secondary">
+                        <h4 class="my-0 fw-normal" th:text="${dish.name}"></h4>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-title pricing-card-title">
+                            <h1 class="d-inline-flex"
+                                th:text="${T(com.topjava.votesystem.util.NumberUtil).formatDecimal(dish?.price)}"></h1>
+                            <h1 class="d-inline-flex" th:text="#{dish.price.currency}"></h1>
+                        </div>
+
+                        <p class="card-text" th:text="${dish.description}"></p>
+
+                        <form id="voteForm" method="POST"
+                              th:action="@{/restaurants/{restaurantId}/menu(id=${dish.id}, restaurantId=${dish.restaurant.id})}">
+
+                            <!-- Added a hidden field for changing the vote -->
+                            <input type="hidden" id="confirmationFlag" name="confirmationFlag" value="false">
+
+                            <button class="w-100 btn btn-lg btn-secondary" type="button" th:text="#{dish.vote}"
+                                    th:disabled="${(voteError ?: false)}"
+                                    onclick="prepareVoteConfirmation()" data-bs-toggle="modal"
+                                    data-bs-target="#confirmVoteModal">
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function castVote() {
+        // Submit the form to cast the vote
+        document.getElementById("voteForm").submit();
+    }
+
+    function showConfirmationModal() {
+        // Show the confirmation modal
+        $('#confirmVoteModal').modal('show');
+    }
+
+    // Function to prepare the vote confirmation
+    function prepareVoteConfirmation() {
+        var voteConfirmation = /*[[${voteConfirmation}]]*/ false;
+        var voteError = /*[[${voteError}]]*/ false;
+        if (voteConfirmation && !voteError) {
+            // Show the confirmation modal if the user has voted but has not voted after 11 AM
+            document.getElementById("confirmationFlag").value = "true"; // Устанавливаем флаг подтверждения в true
+            showConfirmationModal();
+        } else {
+            // If the user has not voted or voted after 11 AM, submit the vote directly
+            document.getElementById("confirmationFlag").value = "false"; // Устанавливаем флаг подтверждения в false
+            castVote();
+        }
+    }
+
+    // Function to handle the "Cancel" button click in the confirmation modal
+    document.getElementById("cancelVoteButton").addEventListener("click", function () {
+        // Hide the confirmation modal when "Cancel" is clicked
+        $('#confirmVoteModal').modal('hide');
+    });
+
+    // Function to handle the "Confirm" button click in the confirmation modal
+    document.getElementById("confirmVoteButton").addEventListener("click", function () {
+        // Set the confirmation flag to "true" before submitting the form
+        document.getElementById("confirmationFlag").value = "true";
+        // Submit the form to cast the vote
+        castVote();
+    });
+</script>
+
+</body>
+</html>

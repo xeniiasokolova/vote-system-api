@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+
+    <title th:text="#{user.title}"></title>
+
+    <style>
+        .error-message {
+            border: 2px solid rgba(241, 80, 80, 0.93);
+            padding: 10px;
+            background-color: rgba(250, 182, 192, 0.99);
+            text-align: center;
+        }
+
+        .success-message {
+            border: 2px solid rgba(241, 214, 80, 0.93);
+            padding: 10px;
+            background-color: rgba(250, 241, 182, 0.99);
+            text-align: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div th:insert="blocks/header :: header"></div>
+
+<div class="container" align="center">
+    <form action="/account" method="POST" th:object="${user}">
+
+        <div class="py-2 text-center">
+            <h3 th:text="#{account.personal}"></h3>
+        </div>
+
+        <!-- Errors -->
+        <!-- Username errors -->
+        <div th:if="${usernameExists}" th:text="#{error.username.exists}"
+             class="col-md-3 py-2 alert alert-danger error-message"></div>
+        <!-- Email errors -->
+        <div th:if="${emailExists}" th:text="#{user.email.exists}"
+             class="col-md-3 py-2 alert alert-danger error-message"></div>
+        <!-- Passwords errors -->
+        <div th:if="${passwordMatchError}" th:text="#{${passwordMatchError}}"
+             class="col-md-3 py-2 alert alert-danger error-message"></div>
+        <div th:if="${passwordLengthError}" th:text="#{${passwordLengthError}}"
+             class="col-md-3 py-2 alert alert-danger error-message"></div>
+
+        <!-- Success user save  -->
+        <div th:if="${successSave}" th:text="#{success.save}"
+             class="col-md-3 py-2 alert alert-danger success-message"></div>
+
+
+        <div class="col-md-3">
+            <input type="hidden" class="form-control"
+                   id="id" name="id"
+                   placeholder="ID"
+                   th:value="${user.id}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="firstName" name="firstName"
+                   th:placeholder="#{user.firstname}"
+                   th:field="*{firstName}" required=""
+                   onchange="formChanged()">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="lastName" name="lastName"
+                   th:placeholder="#{user.lastname}"
+                   th:field="*{lastName}" required=""
+                   onchange="formChanged()">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="username" name="username"
+                   th:placeholder="#{user.username}"
+                   th:field="*{username}" required=""
+                   onchange="formChanged()">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="email" class="form-control"
+                   id="email" name="email"
+                   th:placeholder="#{user.email}"
+                   th:field="*{email}" required=""
+                   onchange="formChanged()">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="checkbox" name="showPasswordCheckbox" id="showPasswordCheckbox"
+                   th:checked="${passwordForm.showPasswordCheckbox}">
+            <label for="showPasswordCheckbox" th:text="#{user.password.change}"></label>
+        </div>
+
+
+        <div id="inputFields" style="display: none;">
+            <div class="col-md-3 py-2">
+                <input type="password" class="form-control"
+                       name="password" id="password"
+                       th:placeholder="#{user.password}"
+                       th:value="${passwordForm.password}"
+                th:field="*{password}"
+                onchange="formChanged()">
+            </div>
+            <div class="col-md-3 py-2">
+                <input type="password" class="form-control"
+                       name="passwordConfirm" id="passwordConfirm"
+                       th:placeholder="#{user.password.confirm}"
+                       th:value="${passwordForm.passwordConfirm}"
+                th:field="*{passwordConfirm}"
+                onchange="formChanged()">
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-center py-2">
+            <a class="btn secondary d-inline-flex align-items-center"
+                    type="button" th:href="@{'/restaurants'}"
+                    th:text="#{restaurant.title}">
+            </a>
+            <button id="updateButton" class="btn btn-secondary d-inline-flex align-items-center"
+                    type="submit" th:text="#{common.save}">
+            </button>
+        </div>
+    </form>
+
+    <script>
+        const checkbox = document.getElementById("showPasswordCheckbox");
+        const inputFields = document.getElementById("inputFields");
+        const updateButton = document.getElementById("updateButton");
+        const form = document.forms[0];
+        const formElements = form.elements;
+
+        // Переменная для хранения исходных данных формы
+        let originalFormData = {};
+
+        // Функция для заполнения originalFormData данными из полей формы
+        function populateOriginalFormData() {
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+                if (element.name) {
+                    originalFormData[element.name] = element.value;
+                }
+            }
+        }
+
+        // Проверяем localStorage при загрузке страницы
+        window.addEventListener("load", function () {
+            const savedCheckboxValue = localStorage.getItem("showPasswordCheckbox");
+            if (savedCheckboxValue === "true") {
+                checkbox.checked = true;
+                inputFields.style.display = "block";
+            }
+
+            // Заполняем originalFormData при загрузке страницы
+            populateOriginalFormData();
+
+            // Вызываем функцию formChanged() при загрузке страницы, чтобы актуализировать состояние кнопки "Обновить"
+            formChanged();
+        });
+
+        // Обрабатываем изменение состояния чекбокса
+        checkbox.addEventListener("change", function () {
+            if (checkbox.checked) {
+                inputFields.style.display = "block";
+                localStorage.setItem("showPasswordCheckbox", "true");
+            } else {
+                inputFields.style.display = "none";
+                localStorage.setItem("showPasswordCheckbox", "false");
+            }
+            // Вызываем функцию formChanged() при изменении чекбокса
+            formChanged();
+        });
+
+        // Функция для сравнения изменений и активации/деактивации кнопки "Обновить"
+        function formChanged() {
+            const currentFormData = {};
+
+            // Обновляем currentFormData
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+                if (element.name) {
+                    currentFormData[element.name] = element.value;
+                }
+            }
+
+            // Проверяем, есть ли изменения в полях ввода пароля
+            const passwordFieldsChanged = checkbox.checked && inputFields.style.display === "block";
+            // Проверяем, есть ли изменения в других полях формы
+            const otherFieldsChanged = JSON.stringify(currentFormData) !== JSON.stringify(originalFormData);
+
+            // Если есть изменения в полях ввода пароля или других полях формы, то кнопка "Обновить" становится активной
+            updateButton.disabled = !(passwordFieldsChanged || otherFieldsChanged);
+        }
+    </script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:spring="http://www.springframework.org/tags">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous">
+
+    <style>
+        .error-message {
+            border: 2px solid rgba(255, 0, 0, 0.93);
+            padding: 10px;
+            background-color: rgba(255, 182, 193, 0.99);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+
+    <title th:text="#{sign.title}"></title>
+</head>
+
+<body>
+<div class="container">
+    <form class="form-signin" method="post" th:action="@{/login}" th:object="${newUser}">
+
+    <h2 class="form-signin-heading text-center" th:text="#{app.login}"></h2>
+
+        <!-- Errors -->
+        <p th:if="${errors}" th:text="#{${errors}}" class="error-message"></p>
+        <!-- Email errors -->
+        <p th:if="${userError}" th:text="#{${userError}}" class="error-message"></p>
+        <!-- Passwords errors -->
+        <p th:if="${passwordError}" th:text="#{${passwordError}}" class="error-message"></p>
+
+        <p>
+            <input type="text" id="username" name="username" class="form-control"
+                   placeholder="username" required="" autofocus=""
+                   th:field="*{username}">
+        </p>
+
+        <p>
+            <input type="password" id="password" name="password" class="form-control"
+                   th:placeholder="#{user.password}" required="" th:field="*{password}">
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{account.signin}"></button>
+
+        <div class="text-center">
+            <p th:text="#{account.isregistered}" style="display: inline;"></p>
+            <a href="/registration" th:text="#{account.create}" style="display: inline;"></a>
+        </div>
+
+    </form>
+
+</div>
+</body>
+</html>

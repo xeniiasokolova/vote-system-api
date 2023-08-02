@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+          crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css"
+          rel="stylesheet" crossorigin="anonymous">
+
+    <style>
+        .error-message {
+            border: 2px solid rgba(241, 80, 80, 0.93);
+            padding: 10px;
+            background-color: rgba(250, 182, 192, 0.99);
+            text-align: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+    </style>
+
+    <title th:text="#{sign.title}"></title>
+
+</head>
+
+<body>
+<div class="container">
+    <form class="form-signin" method="POST" th:action="@{/registration}" th:object="${newUser}">
+
+        <h2 class="form-signin-heading text-center" th:text="#{sign.title}"></h2>
+
+        <!-- Username errors -->
+        <p th:if="${usernameExists}"  th:text="#{error.username.exists}" class="error-message"></p>
+        <!-- Email errors -->
+        <p th:if="${emailExists}"  th:text="#{user.email.exists}" class="error-message"></p>
+        <p th:if="${emailError}" th:text="#{${emailError}}" class="error-message"></p>
+        <!-- Passwords errors -->
+        <p th:if="${passwordMatchError}" th:text="#{${passwordMatchError}}" class="error-message"></p>
+        <p th:if="${passwordLengthError}" th:text="#{${passwordLengthError}}" class="error-message"></p>
+
+        <p>
+            <input type="text" id="firstName" name="firstName" class="form-control"
+                   th:placeholder="#{user.firstname.example}" required=""
+                   autofocus="" th:field="*{firstName}">
+        </p>
+
+        <p>
+            <input type="text" id="lastName" name="lastName" class="form-control"
+                   th:placeholder="#{user.lastname.example}" required=""
+                   autofocus="" th:field="*{lastName}">
+        </p>
+
+        <p>
+            <input type="text" id="username" name="username" class="form-control"
+                   placeholder="username" required=""
+                   autofocus="" th:field="*{username}">
+        </p>
+
+        <p>
+            <input type="email" id="email" name="email" class="form-control"
+                   placeholder="name@example.com" required="" autofocus=""
+                   th:field="*{email}">
+        </p>
+
+        <p>
+            <input type="password" id="password" name="password" class="form-control" th:placeholder="#{user.password}"
+                   required="" th:field="*{password}">
+        </p>
+
+        <p>
+            <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control"
+                   th:placeholder="#{user.password.confirm}" required="" th:field="*{passwordConfirm}">
+        </p>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{app.registration}"></button>
+
+        <div class="text-center">
+            <a href="/login" th:text="#{app.login.back}"></a>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>
