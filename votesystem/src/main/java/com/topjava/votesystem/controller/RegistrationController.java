@@ -7,54 +7,55 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping(path = "/registration")
 @AllArgsConstructor
 public class RegistrationController {
 
     //@Autowired
     private final UserService userService;
-    public final String REGISTRATION_TEMPLATE = "registration";
+    private final String REGISTRATION_TEMPLATE = "registration";
 
     @GetMapping
-    public String registration(Model model) {
+    public ModelAndView registration(Model model) {
         model.addAttribute("newUser", new User());
 
-        return REGISTRATION_TEMPLATE;
+        return new ModelAndView(REGISTRATION_TEMPLATE);
     }
 
     @PostMapping
-    public String addUser(@ModelAttribute("newUser") @Valid User newUser, Model model) {
+    public ModelAndView addUser(@ModelAttribute("newUser") @Valid User newUser, Model model) {
 
         if (userService.isExistsUserByUsername(newUser)) {
             UserHandler.usernameError(model);
-            return REGISTRATION_TEMPLATE;
+            return new ModelAndView(REGISTRATION_TEMPLATE);
         }
 
         if (userService.isExistsUserByEmail(newUser)) {
             UserHandler.emailError(model);
-            return REGISTRATION_TEMPLATE;
+            return new ModelAndView(REGISTRATION_TEMPLATE);
         }
 
         if (newUser.getPassword().length() < 5) {
             UserHandler.passwordLengthError(model);
-            return REGISTRATION_TEMPLATE;
+            return new ModelAndView(REGISTRATION_TEMPLATE);
         }
 
         if (!newUser.getPassword().equals(newUser.getPasswordConfirm())) {
             UserHandler.passwordMatchError(model);
-            return REGISTRATION_TEMPLATE;
+            return new ModelAndView(REGISTRATION_TEMPLATE);
         }
 
         if (!userService.signUpUser(newUser)) {
             UserHandler.emailInvalidError(model);
-            return REGISTRATION_TEMPLATE;
+            return new ModelAndView(REGISTRATION_TEMPLATE);
         }
 
-        return "redirect:/login";
+        return new ModelAndView("redirect:/login");
     }
 
 }

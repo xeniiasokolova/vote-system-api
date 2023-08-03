@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.topjava.votesystem.service.UserService;
-
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @Configuration

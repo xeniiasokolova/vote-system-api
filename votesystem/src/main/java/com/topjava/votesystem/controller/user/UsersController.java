@@ -9,16 +9,14 @@ import com.topjava.votesystem.util.ObjectUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 
-@Controller
+@RestController
 @AllArgsConstructor
 @RequestMapping(path = "/users")
 public class UsersController extends BaseController {
@@ -30,65 +28,65 @@ public class UsersController extends BaseController {
 
 
     @GetMapping
-    public String readAll(Model model) {
+    public ModelAndView readAll(Model model) {
         model.addAttribute("users", userService.readAll());
-        return TEMPLATE_ADMIN_USERS;
+        return new ModelAndView(TEMPLATE_ADMIN_USERS);
     }
 
 
     @GetMapping("/add")
-    public String create(Model model) {
+    public ModelAndView create(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", Role.values());
-        return TEMPLATE_ADMIN_USERS_FORM;
+        return new ModelAndView(TEMPLATE_ADMIN_USERS_FORM);
     }
 
     @PostMapping("/add")
-    public String saveNewUser(@ModelAttribute("user") @Valid User user, Model model) {
+    public ModelAndView saveNewUser(@ModelAttribute("user") @Valid User user, Model model) {
         if (userService.isExistsUserByUsername(user)) {
-            return handleUsernameExistsError(model, user);
+            return new ModelAndView(handleUsernameExistsError(model, user));
         }
         if (userService.isExistsUserByEmail(user)) {
-            return handleEmailExistsError(model, user);
+            return new ModelAndView(handleEmailExistsError(model, user));
         }
         if (user.getPassword().length() < 5) {
-            return handlePasswordLengthError(model, user);
+            return new ModelAndView(handlePasswordLengthError(model, user));
         }
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
-            return handlePasswordMismatchError(model, user);
+            return new ModelAndView(handlePasswordMismatchError(model, user));
         }
         userService.create(user);
-        return "redirect:/users";
+        return new ModelAndView("redirect:/users");
     }
 
 
     @GetMapping("/update")
-    public String update(HttpServletRequest request, Model model) {
+    public ModelAndView update(HttpServletRequest request, Model model) {
         User user = userService.read(ObjectUtil.getId(request));
         addCommonAttributes(model, user);
-        return TEMPLATE_ADMIN_USERS_FORM;
+        return new ModelAndView(TEMPLATE_ADMIN_USERS_FORM);
     }
 
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute("user") @Valid User user, Model model) {
+    public ModelAndView updateUser(@ModelAttribute("user") @Valid User user, Model model) {
         User userBD = userService.read(user.getId());
         if (!userBD.getUsername().equals(user.getUsername())
                 && userService.isExistsUserByUsername(user)) {
-            return handleUsernameExistsError(model, user);
+            return new ModelAndView(handleUsernameExistsError(model, user));
         }
         if (!userBD.getEmail().equals(user.getEmail())
                 && userService.isExistsUserByEmail(user)) {
-            return handleEmailExistsError(model, user);
+            return new ModelAndView(handleEmailExistsError(model, user));
         }
         userService.update(user, userBD.getId());
-        return "redirect:/users";
+        return new ModelAndView("redirect:/users");
     }
 
     @GetMapping("/delete")
-    public String delete(HttpServletRequest request) {
+    public ModelAndView delete(HttpServletRequest request) {
         userService.delete(ObjectUtil.getId(request));
-        return "redirect:/users";
+        return new ModelAndView("redirect:/users");
     }
 
 

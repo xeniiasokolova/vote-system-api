@@ -11,11 +11,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
-@Controller
+@RestController
 @AllArgsConstructor
 @RequestMapping("/restaurants/{id}/menu")
 public class MenuController extends BaseController {
@@ -31,7 +32,7 @@ public class MenuController extends BaseController {
 
     //переходим в меню ресторана
     @GetMapping
-    public String menu(@PathVariable("id") long restaurantId, Principal principal, Model model, HttpServletRequest request) {
+    public ModelAndView menu(@PathVariable("id") long restaurantId, Principal principal, Model model, HttpServletRequest request) {
         User user = userService.readByUsername(principal.getName());
         Restaurant restaurant = restaurantService.read(restaurantId);
 
@@ -45,11 +46,11 @@ public class MenuController extends BaseController {
             model.addAttribute("voteConfirmation", true);
         }
 
-        return getMenuTemplate(user);
+        return new ModelAndView(getMenuTemplate(user));
     }
 
     @PostMapping
-    public String vote(@RequestParam("confirmationFlag") String confirmationFlag,
+    public ModelAndView vote(@RequestParam("confirmationFlag") String confirmationFlag,
                        HttpServletRequest request, Principal principal) {
 
         User user = userService.readByUsername(principal.getName());
@@ -58,25 +59,25 @@ public class MenuController extends BaseController {
         if ("true".equals(confirmationFlag) || !voteService.hasVotedToday(user)) {
             voteService.vote(new Vote(user, dish.getRestaurant(), dish));
         }
-        return "redirect:/restaurants/" + dish.getRestaurant().getId() + "/menu";
+        return new ModelAndView("redirect:/restaurants/" + dish.getRestaurant().getId() + "/menu");
     }
 
 
     @GetMapping("/add")
-    public String create(@PathVariable("id") Long restaurantId, Model model) {
+    public ModelAndView create(@PathVariable("id") Long restaurantId, Model model) {
         Restaurant restaurant = restaurantService.read(restaurantId);
         model.addAttribute("dish", new Dish(restaurant));
-        return TEMPLATE_ADMIN_MENU_FORM;
+        return new ModelAndView(TEMPLATE_ADMIN_MENU_FORM);
     }
 
     @GetMapping("/update")
-    public String update(HttpServletRequest request, Model model) {
+    public ModelAndView update(HttpServletRequest request, Model model) {
         model.addAttribute("dish", service.read(ObjectUtil.getId(request)));
-        return TEMPLATE_ADMIN_MENU_FORM;
+        return new ModelAndView(TEMPLATE_ADMIN_MENU_FORM);
     }
 
     @PostMapping(value = "/save")
-    public String updateOrDelete(HttpServletRequest request, @PathVariable("id") Long restaurantId) {
+    public ModelAndView updateOrDelete(HttpServletRequest request, @PathVariable("id") Long restaurantId) {
         Dish dish = new Dish(restaurantService.read(restaurantId),
                 request.getParameter("name"),
                 request.getParameter("description"),
@@ -86,13 +87,13 @@ public class MenuController extends BaseController {
         } else {
             service.update(dish, Long.parseLong(request.getParameter("id")));
         }
-        return "redirect:/restaurants/" + restaurantId + "/menu";
+        return new ModelAndView("redirect:/restaurants/" + restaurantId + "/menu");
     }
 
     @GetMapping("/delete")
-    public String delete(HttpServletRequest request, @PathVariable("id") Long restaurantId) {
+    public ModelAndView delete(HttpServletRequest request, @PathVariable("id") Long restaurantId) {
         service.delete(ObjectUtil.getId(request));
-        return "redirect:/restaurants/" + restaurantId + "/menu";
+        return new ModelAndView("redirect:/restaurants/" + restaurantId + "/menu");
     }
 
     private String getMenuTemplate(User user) {

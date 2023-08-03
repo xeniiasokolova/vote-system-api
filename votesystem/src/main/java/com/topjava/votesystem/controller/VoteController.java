@@ -7,10 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 @AllArgsConstructor
 @RequestMapping(path = "/votes")
 public class VoteController extends BaseController {
@@ -19,14 +21,14 @@ public class VoteController extends BaseController {
     public final String VOTE_TEMPLATE = "admin/votes";
 
     @GetMapping
-    public String votes(Model model) {
+    public ModelAndView votes(Model model) {
         model.addAttribute("votes", voteService.readAll());
-        return VOTE_TEMPLATE;
+        return new ModelAndView(VOTE_TEMPLATE);
     }
 
     @GetMapping("/delete")
-    public String delete(HttpServletRequest request) {
+    public ModelAndView delete(HttpServletRequest request) {
         voteService.delete(ObjectUtil.getId(request));
-        return "redirect:/votes";
+        return new ModelAndView("redirect:/votes");
     }
 }
