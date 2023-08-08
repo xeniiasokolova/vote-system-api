@@ -2,6 +2,7 @@ package com.topjava.votesystem.service;
 
 
 import com.topjava.votesystem.model.Dish;
+import com.topjava.votesystem.model.Restaurant;
 import com.topjava.votesystem.repository.MenuRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -70,4 +71,16 @@ public class MenuService {
         log.info("delete {}", id);
         repository.deleteById(id);
     }
+
+    public void deleteByRestaurant(Restaurant restaurant) {
+        log.info("delete by restaurant = {}", restaurant);
+        if (!restaurant.getDishes().isEmpty()) {
+            repository.deleteDishesByRestaurant(restaurant);
+        }
+
+    }
+
+
+
+
 }

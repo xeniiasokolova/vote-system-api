@@ -57,7 +57,6 @@ public class VoteService {
         }
     }
 
-
     public boolean isUpdatedVote(User user) {
         return hasVotedToday(user) && !hasVotedAfter11AM(user);
     }
@@ -84,5 +83,15 @@ public class VoteService {
         return false;
     }
 
+
+    public void deleteAllVotesByRestaurantId(Long id) {
+        if (hasVotesByRestaurantId(id)) {
+            voteRepository.deleteAllByRestaurantId(id);
+        }
+    }
+
+    public boolean hasVotesByRestaurantId(Long id) {
+        return !voteRepository.findVotesByRestaurantId(id).isEmpty();
+    }
 
 }

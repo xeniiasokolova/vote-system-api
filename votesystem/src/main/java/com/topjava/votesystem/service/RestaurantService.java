@@ -1,6 +1,5 @@
 package com.topjava.votesystem.service;
 
-
 import com.topjava.votesystem.model.Restaurant;
 import com.topjava.votesystem.repository.RestaurantRepository;
 import lombok.AllArgsConstructor;
@@ -21,9 +20,10 @@ public class RestaurantService {
     private static final Logger log = LoggerFactory.getLogger(RestaurantService.class);
 
     /**
-     * Создание нового ресторана
-     * @param restaurant - ресторан, который будем добавлять
-     * @return сохраненный ресторан
+     * Create new restaurant
+     *
+     * @param restaurant - restaurant for creation
+     * @return saved restaurant
      */
     @Transactional
     public Restaurant create(Restaurant restaurant) {
@@ -32,96 +32,65 @@ public class RestaurantService {
     }
 
     /**
-     * Получение всех ресторанов
-     * @return список всех ресторанов
+     * Get all restaurants
+     *
+     * @return list of all restaurants
      */
     public List<Restaurant> readAll() {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     /**
-     * Получить ресторан по id
-     * @param id - идентификатор
-     * @return ресторан по id
+     * Get restaurant by id
+     *
+     * @param id - identity
+     * @return restaurant
      */
     public Restaurant read(Long id) {
         return repository.findById(id).get();
     }
 
     /**
-     * Обновить ресторан по id
-     * @param restaurant - ресторан
-     * @param id - идентификатор
+     * Check restaurant in database
+     *
+     * @param id - identity
+     * @return true - exist, false - not exist
      */
-    public void update(Restaurant restaurant, Long id) {
-        restaurant.setId(id);
-        log.info("update {} with id={}", restaurant, id);
-        repository.save(restaurant);
+    public boolean isRestaurantExist(long id) {
+        try {
+            Restaurant restaurant = read(id);
+            return restaurant != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
-     * Удалить ресторан по id
-     * @param id - идентификатор
+     * Update restaurant by id
+     *
+     * @param restaurant - data for update
+     * @param id         - restaurant id for update
+     * @return  true - the restaurant is updated, false - not updated
+     */
+    public boolean update(Restaurant restaurant, long id) {
+        try {
+            Restaurant restaurantOld = read(id);
+            restaurantOld.setName(restaurant.getName());
+            repository.save(restaurantOld);
+            log.info("update {}", restaurantOld);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Delete restaurant by id
+     *
+     * @param id - identity
      */
     public void delete(Long id) {
-        log.info("delete {}", id);
         repository.deleteById(id);
+        log.info("delete {}", id);
     }
-
 }
-
-/*
-
-    private static final Logger log = LoggerFactory.getLogger(RestaurantService.class);
-    @Autowired
-    private final RestaurantRepository repository;
-    private Boolean buttonClicked;
-
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void save(Restaurant restaurant) {
-        repository.save(restaurant);
-    }
-
-
-
-    public List<Restaurant> search(String keyword) {
-        List<Restaurant> restaurants = repository.search(keyword);
-        log.info("search {} with keyword={}", restaurants, keyword);
-        return restaurants;
-    }
-
-    public Boolean isButtonClicked() {
-        return buttonClicked;
-    }
-
-    public void setButtonClicked() {
-        if (buttonClicked == null) {
-            buttonClicked = true;
-        }
-    }
-
-    public void checkForResetRestaurantVotes() {
-        List<Restaurant> restaurantsToUpdate = getAll().stream()
-                .filter(r -> r.getDateTimeLastVote() != null && r.getDateTimeLastVote().toLocalDate().isBefore(LocalDate.now()))
-                .peek(r -> r.setCountVoices(0))
-                .collect(Collectors.toList());
-        log.info("reset votes from another days {}", restaurantsToUpdate);
-        repository.saveAll(restaurantsToUpdate);
-    }
-
-    public void deleteVote(Restaurant restaurant) {
-        if (restaurant != null && restaurant.getCountVoices() > 0) {
-            restaurant.setCountVoices(restaurant.getCountVoices() - 1);
-            log.info("delete vote from restaurant {}", restaurant);
-            repository.save(restaurant);
-        }
-    }
-
-    public void addVote(long id) {
-        Restaurant restaurant = get(id);
-        restaurant.setCountVoices(restaurant.getCountVoices() + 1);
-        restaurant.setDateTimeLastVote(LocalDateTime.now());
-        repository.save(restaurant);
-    }
- */

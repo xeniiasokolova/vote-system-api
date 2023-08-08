@@ -2,76 +2,74 @@ package com.topjava.votesystem.controller.restaurant;
 
 import com.topjava.votesystem.controller.BaseController;
 import com.topjava.votesystem.model.Restaurant;
-import com.topjava.votesystem.model.Role;
+import com.topjava.votesystem.service.MenuService;
 import com.topjava.votesystem.service.RestaurantService;
-import com.topjava.votesystem.service.UserService;
-import com.topjava.votesystem.util.ObjectUtil;
+import com.topjava.votesystem.service.VoteService;
 import lombok.AllArgsConstructor;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/restaurants")
 public class RestaurantController extends BaseController {
-    public static final String TEMPLATE_USER_RESTAURANT = "user/restaurants";
-    public static final String TEMPLATE_ADMIN_RESTAURANT = "admin/restaurants";
-    public static final String TEMPLATE_ADMIN_RESTAURANT_FORM = "admin/restaurantForm";
 
     private final RestaurantService restaurantService;
-    private final UserService userService;
+    private final MenuService menuService;
+    private final VoteService voteService;
 
-
-    //получение списка всех ресторанов
+    //get all restaurants
     @GetMapping
-    public ModelAndView readAll(Model model, Principal principal) {
-        String roleCurrentUser = userService.getRoleByUsername(principal.getName());
-        model.addAttribute("restaurants",
-                restaurantService.readAll());
-        if (roleCurrentUser.equals(Role.ADMIN.name())) {
-            return new ModelAndView(TEMPLATE_ADMIN_RESTAURANT);
+    ResponseEntity<List<Restaurant>> readAll() {
+        final List<Restaurant> restaurants = restaurantService.readAll();
+        return restaurants != null && !restaurants.isEmpty() ?
+                new ResponseEntity<>(restaurants, HttpStatus.OK) :
+                new ResponseEntity<>(restaurants, HttpStatus.NOT_FOUND);
+    }
+
+    //add new restaurant
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody Restaurant restaurant) {
+        restaurantService.create(restaurant);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    //get restaurant by id
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Restaurant> read(@PathVariable(name = "id") Long id) {
+        final Restaurant restaurant = restaurantService.read(id);
+        return restaurant != null ?
+                new ResponseEntity<>(restaurant, HttpStatus.OK) :
+                new ResponseEntity<>(restaurant, HttpStatus.NOT_FOUND);
+    }
+
+    //update restaurant by id
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Restaurant restaurant) {
+        final boolean isUpdate = restaurantService.update(restaurant, id);
+        return isUpdate ?
+                new ResponseEntity<>(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    //delete restaurant and all it's dishes and votes
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
+        try {
+            Restaurant restaurant = restaurantService.read(id);
+            //очищаем список голоса
+            voteService.deleteAllVotesByRestaurantId(id);
+            //очищаем блюда
+            menuService.deleteByRestaurant(restaurant);
+            //удаляем рестораны
+            restaurantService.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
         }
-        return new ModelAndView(TEMPLATE_USER_RESTAURANT);
-    }
-
-    //добавить новый ресторан
-    @GetMapping("/add")
-    public ModelAndView create(Model model) {
-        model.addAttribute("restaurant", new Restaurant());
-        return new ModelAndView(TEMPLATE_ADMIN_RESTAURANT_FORM);
-    }
-
-    //обновить данные по ресторану
-    @GetMapping("/update")
-    public ModelAndView update(HttpServletRequest request, Model model) {
-        model.addAttribute("restaurant", restaurantService.read(ObjectUtil.getId(request)));
-        return new ModelAndView(TEMPLATE_ADMIN_RESTAURANT_FORM);
-    }
-
-    //coхранить изменения по ресторану
-    @PostMapping(value = "/save")
-    public ModelAndView save(HttpServletRequest request) {
-        Restaurant restaurant = new Restaurant(request.getParameter("name"));
-        if (request.getParameter("id").isEmpty()) {
-            restaurantService.create(restaurant);
-        } else {
-            restaurantService.update(restaurant, ObjectUtil.getId(request));
-        }
-        return new ModelAndView("redirect:/restaurants");
-    }
-
-    //удалить данные
-    @GetMapping("/delete")
-    public ModelAndView delete(HttpServletRequest request) {
-        restaurantService.delete(ObjectUtil.getId(request));
-        return new ModelAndView("redirect:/restaurants");
     }
 }
 
