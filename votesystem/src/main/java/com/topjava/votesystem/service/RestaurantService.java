@@ -3,8 +3,6 @@ package com.topjava.votesystem.service;
 import com.topjava.votesystem.model.Restaurant;
 import com.topjava.votesystem.repository.RestaurantRepository;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +15,6 @@ import java.util.List;
 public class RestaurantService {
 
     private final RestaurantRepository repository;
-    private static final Logger log = LoggerFactory.getLogger(RestaurantService.class);
 
     /**
      * Create new restaurant
@@ -27,7 +24,6 @@ public class RestaurantService {
      */
     @Transactional
     public Restaurant create(Restaurant restaurant) {
-        log.info("create {}", restaurant);
         return repository.save(restaurant);
     }
 
@@ -36,7 +32,7 @@ public class RestaurantService {
      *
      * @return list of all restaurants
      */
-    public List<Restaurant> readAll() {
+    public List<Restaurant> getAll() {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
@@ -46,7 +42,7 @@ public class RestaurantService {
      * @param id - identity
      * @return restaurant
      */
-    public Restaurant read(Long id) {
+    public Restaurant get(Long id) {
         return repository.findById(id).get();
     }
 
@@ -58,7 +54,7 @@ public class RestaurantService {
      */
     public boolean isRestaurantExist(long id) {
         try {
-            Restaurant restaurant = read(id);
+            Restaurant restaurant = get(id);
             return restaurant != null;
         } catch (Exception e) {
             return false;
@@ -74,10 +70,9 @@ public class RestaurantService {
      */
     public boolean update(Restaurant restaurant, long id) {
         try {
-            Restaurant restaurantOld = read(id);
+            Restaurant restaurantOld = get(id);
             restaurantOld.setName(restaurant.getName());
             repository.save(restaurantOld);
-            log.info("update {}", restaurantOld);
             return true;
         } catch (Exception e) {
             return false;
@@ -91,6 +86,5 @@ public class RestaurantService {
      */
     public void delete(Long id) {
         repository.deleteById(id);
-        log.info("delete {}", id);
     }
 }

@@ -17,7 +17,7 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq_restaurants")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "voices")
@@ -26,8 +26,8 @@ public class Restaurant {
     @Column(name = "datetime_last_vote", columnDefinition = "timestamp default now()")
     private LocalDateTime dateTimeLastVote;
 
-    @Column(name = "registered")
-    private LocalDateTime registered;
+    @Column(name = "registered", columnDefinition = "timestamp default now()")
+    private LocalDateTime registered = LocalDateTime.now();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473

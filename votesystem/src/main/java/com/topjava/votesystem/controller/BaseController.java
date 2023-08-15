@@ -1,12 +1,12 @@
 package com.topjava.votesystem.controller;
 
+import com.topjava.votesystem.model.User;
 import com.topjava.votesystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+
 public class BaseController {
 
     @Autowired
@@ -25,6 +25,15 @@ public class BaseController {
     public String getUsername(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             return authentication.getName();
+        }
+        return null;
+    }
+
+    @ModelAttribute("user")
+    public User getAuthUser(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            return (User) userService.loadUserByUsername(username);//authentication.getName();
         }
         return null;
     }

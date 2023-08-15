@@ -44,7 +44,7 @@ public class RestaurantServiceTest {
         List<Restaurant> restaurants = new ArrayList<>();
         when(restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"))).thenReturn(restaurants);
 
-        List<Restaurant> retrievedRestaurants = restaurantService.readAll();
+        List<Restaurant> retrievedRestaurants = restaurantService.getAll();
 
         assertEquals(restaurants, retrievedRestaurants);
         verify(restaurantRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "name"));
@@ -55,7 +55,7 @@ public class RestaurantServiceTest {
         Restaurant restaurant = new Restaurant();
         when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
 
-        Restaurant retrievedRestaurant = restaurantService.read(1L);
+        Restaurant retrievedRestaurant = restaurantService.get(1L);
 
         assertNotNull(retrievedRestaurant);
         verify(restaurantRepository, times(1)).findById(1L);

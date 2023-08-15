@@ -1,4 +1,4 @@
-package com.topjava.votesystem.controller.restaurant;
+package com.topjava.votesystem.controller.restaurant.menu;
 
 import com.topjava.votesystem.controller.BaseController;
 import com.topjava.votesystem.model.*;
@@ -34,7 +34,7 @@ public class MenuController extends BaseController {
     @GetMapping
     public ModelAndView menu(@PathVariable("id") long restaurantId, Principal principal, Model model, HttpServletRequest request) {
         User user = userService.readByUsername(principal.getName());
-        Restaurant restaurant = restaurantService.read(restaurantId);
+        Restaurant restaurant = restaurantService.get(restaurantId);
 
         model.addAttribute("dishes", restaurant.getDishes());
         model.addAttribute("restaurantName", restaurant.getName());
@@ -65,7 +65,7 @@ public class MenuController extends BaseController {
 
     @GetMapping("/add")
     public ModelAndView create(@PathVariable("id") Long restaurantId, Model model) {
-        Restaurant restaurant = restaurantService.read(restaurantId);
+        Restaurant restaurant = restaurantService.get(restaurantId);
         model.addAttribute("dish", new Dish(restaurant));
         return new ModelAndView(TEMPLATE_ADMIN_MENU_FORM);
     }
@@ -78,7 +78,7 @@ public class MenuController extends BaseController {
 
     @PostMapping(value = "/save")
     public ModelAndView updateOrDelete(HttpServletRequest request, @PathVariable("id") Long restaurantId) {
-        Dish dish = new Dish(restaurantService.read(restaurantId),
+        Dish dish = new Dish(restaurantService.get(restaurantId),
                 request.getParameter("name"),
                 request.getParameter("description"),
                 Float.parseFloat(request.getParameter("price")));
