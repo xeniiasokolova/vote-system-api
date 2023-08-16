@@ -29,11 +29,11 @@ public class VoteService {
         return voteRepository.save(vote);
     }
 
-    public List<Vote> readAll() {
+    public List<Vote> getAll() {
         return voteRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
-    public Vote read(Long id) {
+    public Vote get(Long id) {
         return voteRepository.findById(id).get();
     }
 
@@ -92,6 +92,16 @@ public class VoteService {
 
     public boolean hasVotesByRestaurantId(Long id) {
         return !voteRepository.findVotesByRestaurantId(id).isEmpty();
+    }
+
+    public void deleteAllVotesByDishId(Long id) {
+        if (hasVotesByDishId(id)) {
+            voteRepository.deleteAllByDishId(id);
+        }
+    }
+
+    public boolean hasVotesByDishId(Long id) {
+        return !voteRepository.findVotesByDishId(id).isEmpty();
     }
 
 }

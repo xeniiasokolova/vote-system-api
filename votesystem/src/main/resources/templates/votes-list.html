@@ -17,7 +17,7 @@
     </div>
 </section>
 
-<div class="container">
+<div class="container py-5">
 
     <div class="table-responsive middle">
         <table class="table table-striped table-md">
@@ -40,8 +40,10 @@
                 <td>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                            <a th:href="@{/votes/delete(id=${vote.id})}"
-                               class="btn btn-sm btn-outline-secondary" th:text="#{common.delete}"></a>
+                            <a th:href="@{/rest/votes/{id}(id=${vote.id})}"
+                               class="btn btn-sm btn-outline-secondary delete-vote-button"
+                               th:attr="data-vote-id=${vote.id}"
+                               th:text="#{common.delete}"></a>
                         </div>
                     </div>
 
@@ -51,6 +53,6 @@
     </div>
 
 </div>
-
+<script type="text/javascript" src="/js/votes.js"></script>
 </body>
 </html>

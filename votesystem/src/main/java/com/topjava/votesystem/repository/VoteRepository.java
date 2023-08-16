@@ -18,4 +18,8 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
     List<Vote> findVotesByRestaurantId(Long id);
 
+    void deleteAllByDishId(Long id);
+
+    List<Vote> findVotesByDishId(Long id);
+
 }
