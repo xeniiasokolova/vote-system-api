@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/errors.css">
+    <title th:text="#{user.add}"></title>
+
+
+</head>
+<body>
+<div th:insert="blocks/header :: header"></div>
+
+<div class="container" align="center">
+    <div class="py-2 text-center">
+        <h3 th:text="#{user.add}"></h3>
+    </div>
+
+    <!-- Errors -->
+    <div id="error-message" class="col-md-3 py-2 alert alert-danger error-message d-none"></div>
+
+    <!-- Form to update restaurant data -->
+    <form id="createUser" th:action="@{/rest/users}" th:object="${newUser}" method="POST">
+
+        <div class="col-md-3">
+            <input type="hidden" class="form-control"
+                   id="id" name="id"
+                   placeholder="ID"
+                   th:value="${newUser.id}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="firstName" name="firstName"
+                   th:placeholder="#{user.firstname}"
+                   th:field="*{firstName}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="lastName" name="lastName"
+                   th:placeholder="#{user.lastname}"
+                   th:field="*{lastName}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="text" class="form-control"
+                   id="username" name="username"
+                   th:placeholder="#{user.username}"
+                   th:field="*{username}" required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="email" class="form-control"
+                   id="email" name="email"
+                   th:placeholder="#{user.email}"
+                   th:field="*{email}" required="">
+        </div>
+
+
+        <div class="col-md-3 py-2">
+            <select class="form-select" id="user_role" name="userRole" required="">
+                <option th:text="#{user.roles}"></option>
+                <option th:each="role : ${roles}"
+                        th:value="${role}"
+                        th:text="${role}"
+                        th:selected="${role == null}"></option>
+            </select>
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="password" class="form-control"
+                   id="password" name="password"
+                   th:placeholder="#{user.password}"
+                   th:field="*{password}"
+                   required="">
+        </div>
+
+        <div class="col-md-3 py-2">
+            <input type="password" class="form-control"
+                   id="passwordConfirm" name="passwordConfirm"
+                   th:placeholder="#{user.password.confirm}"
+                   th:field="*{passwordConfirm}"
+                   required="">
+        </div>
+
+
+        <div class="d-flex gap-2 justify-content-center py-2">
+            <!-- Cancel actions -->
+            <a th:href="@{/users}" th:text="#{common.cancel}"
+               class="btn secondary d-inline-flex align-items-center"></a>
+            <!-- Save the user -->
+            <button class="btn btn-secondary d-inline-flex align-items-center"
+                    type="submit"
+                    onclick="updateOrCreateUser('createUser', 'POST')"
+                    th:text="#{common.save}">
+            </button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/js/users.js" defer>
+</script>
+</body>
+</html>
