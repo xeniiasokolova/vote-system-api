@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public List<User> readAll() {
+    public List<User> getAll() {
         return userRepository.findAll(Sort.by(Sort.Direction.DESC, "registered"));
     }
 
@@ -80,7 +80,7 @@ public class UserService implements UserDetailsService {
      * @param id - идентификатор
      * @return возвращаем пользователя
      */
-    public User read(Long id) {
+    public User get(Long id) {
         return userRepository.findById(id).get();
     }
 
@@ -96,7 +96,7 @@ public class UserService implements UserDetailsService {
      * @param id   - идентификатор
      */
     public void update(User user, Long id) {
-        User userOld = read(id);
+        User userOld = get(id);
         userOld.setFirstName(user.getFirstName());
         userOld.setLastName(user.getLastName());
         userOld.setEmail(user.getEmail());
