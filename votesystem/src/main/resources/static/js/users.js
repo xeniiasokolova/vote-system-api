@@ -28,10 +28,10 @@ function updateOrCreateUser(formId, method) {
                     response.text().then(errorMessage => {
                         if (errorMessage) {
                             errorMessageElement.textContent = errorMessage;
-                            errorMessageElement.classList.remove("d-none"); // Показать элемент
+                            errorMessageElement.classList.remove("d-none"); // Show element
                         } else {
                             errorMessageElement.textContent = "";
-                            errorMessageElement.classList.add("d-none"); // Скрыть элемент
+                            errorMessageElement.classList.add("d-none"); // Hide element
                         }
                     });
                 }

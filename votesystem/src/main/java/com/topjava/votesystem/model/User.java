@@ -27,7 +27,10 @@ public class User implements UserDetails {
 
     public static final int START_SEQ_USER = 100000;
     @Id
-    @SequenceGenerator(name = "global_seq_users", sequenceName = "global_seq_users", allocationSize = 1, initialValue = START_SEQ_USER)
+    @SequenceGenerator(name = "global_seq_users",
+            sequenceName = "global_seq_users",
+            allocationSize = 1,
+            initialValue = START_SEQ_USER)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq_users")
     private Long id;
 
@@ -120,4 +123,17 @@ public class User implements UserDetails {
         return this.id == null;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", userRole=" + userRole +
+                ", registered=" + registered.toString() +
+                '}';
+    }
 }

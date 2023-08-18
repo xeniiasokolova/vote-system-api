@@ -46,20 +46,18 @@ public class UserService implements UserDetailsService {
         if (isExistsUserByEmail(user)) {
             return false; // User already exists
         }
-        System.out.println("Пароль перед шифрованием" + user.getPassword());
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         user.setUserRole(Role.USER);
         userRepository.save(user);
-        System.out.println("Пароль после шифрования" + user.getPassword());
         return true;
     }
 
     /**
-     * Создание нового пользователя
+     * Creating a new user
      *
-     * @param user - пользователь, которого будем добавлять
-     * @return сохраненного пользователя
+     * @param user - user to be added
+     * @return saved user
      */
     @Transactional
     public User create(User user) {
@@ -70,30 +68,41 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    /**
+     * Get all users
+     *
+     * @return list of all users sorted by registration date
+     */
     public List<User> getAll() {
         return userRepository.findAll(Sort.by(Sort.Direction.DESC, "registered"));
     }
 
     /**
-     * Получить пользователя по id
+     * Get user by id
      *
-     * @param id - идентификатор
-     * @return возвращаем пользователя
+     * @param id - id
+     * @return return user
      */
     public User get(Long id) {
         return userRepository.findById(id).get();
     }
 
+    /**
+     * Get user by username
+     *
+     * @param username - username
+     * @return return user
+     */
     public User readByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
 
     /**
-     * Обновить пользователя по id
+     * Update user by id
      *
-     * @param user - пользователь
-     * @param id   - идентификатор
+     * @param user - user
+     * @param id   - identifier
      */
     public void update(User user, Long id) {
         User userOld = get(id);
@@ -117,27 +126,53 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Удалить пользователь по id
+     * Delete user by id
      *
-     * @param id - идентификатор
+     * @param id - identifier
      */
     public void delete(Long id) {
         log.info("delete {}", id);
         userRepository.deleteById(id);
     }
 
+    /**
+     * Get role by username
+     *
+     * @param username - username user
+     * @return role
+     */
     public String getRoleByUsername(String username) {
         return readByUsername(username).getUserRole().name();
     }
 
+    /**
+     * Check if there is a user with this email
+     *
+     * @param user - user
+     * @return true if user existed
+     */
     public boolean isExistsUserByEmail(User user) {
         return userRepository.findByEmail(user.getEmail()).isPresent();
     }
 
+
+    /**
+     * Check if there is a user with this username
+     *
+     * @param user - user
+     * @return true if user existed
+     */
     public boolean isExistsUserByUsername(User user) {
         return userRepository.findByUsername(user.getUsername()) != null;
     }
 
+    /**
+     * Check if passwords match
+     *
+     * @param rawPassword     - password without encoding
+     * @param encodedPassword - password with encoding
+     * @return true if passwords match
+     */
     public boolean isPasswordsEqual(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }

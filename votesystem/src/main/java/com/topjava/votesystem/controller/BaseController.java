@@ -33,7 +33,7 @@ public class BaseController {
     public User getAuthUser(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            return (User) userService.loadUserByUsername(username);//authentication.getName();
+            return (User) userService.loadUserByUsername(username);
         }
         return null;
     }

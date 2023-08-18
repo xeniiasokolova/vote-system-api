@@ -45,6 +45,13 @@ public class UserRestController extends UserAbstractController {
                     messageSource.getMessage("user.email.exists", null, locale)
             );
         }
+
+        if (user.getUserRole() == null) {
+            return ResponseEntity.badRequest().body(
+                    messageSource.getMessage("user.role.error", null, locale)
+            );
+        }
+
         if (user.getPassword().length() < 5) {
             return ResponseEntity.badRequest().body(
                     messageSource.getMessage("error.password.length", null, locale)
