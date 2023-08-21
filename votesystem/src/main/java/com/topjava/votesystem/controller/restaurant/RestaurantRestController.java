@@ -19,11 +19,15 @@ public class RestaurantRestController extends AbstractRestaurantController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        super.update(restaurant, id);
-        return ResponseEntity.ok().build();
+        boolean isUpdated = super.update(restaurant, id);
+        if (isUpdated) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
         super.delete(id);
         return ResponseEntity.ok().build();

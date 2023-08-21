@@ -21,14 +21,22 @@ public abstract class AbstractRestaurantController extends BaseController {
     @Autowired
     private MenuService menuService;
 
-
-    //get restaurant by id
+    /**
+     * Get restaurant by id
+     *
+     * @param id - restaurant's identity
+     * @return restaurant
+     */
     public Restaurant get(long id) {
         log.info("get restaurant {}", id);
         return service.get(id);
     }
 
-    //delete restaurant and all it's dishes and votes
+    /**
+     * Delete restaurant and all it's dishes and votes
+     *
+     * @param id - restaurant's identity
+     */
     public void delete(long id) {
         log.info("delete restaurant {}", id);
         Restaurant restaurant = service.get(id);
@@ -40,22 +48,37 @@ public abstract class AbstractRestaurantController extends BaseController {
         service.delete(id);
     }
 
-    //get all restaurants
+    /**
+     * Get all restaurants
+     *
+     * @return list of all restaurants
+     */
     public List<Restaurant> getAll() {
         log.info("get all restaurants");
         return service.getAll();
     }
 
-    //add new restaurant
+    /**
+     * Add new restaurant
+     *
+     * @param restaurant - restaurant to be added
+     * @return - added restaurant
+     */
     public Restaurant create(Restaurant restaurant) {
         log.info("create restaurant {}", restaurant);
         return service.create(restaurant);
     }
 
-    //update restaurant by id
-    public void update(Restaurant restaurant, long id) {
+    /**
+     * Update restaurant by id
+     *
+     * @param restaurant - restaurant form to be updated
+     * @param id         - restaurant's identity
+     * @return true if restaurant updated
+     */
+    public boolean update(Restaurant restaurant, long id) {
         log.info("update restaurant {} with id = {}", restaurant, id);
-        service.update(restaurant, id);
+        return service.update(restaurant, id);
     }
 
 }

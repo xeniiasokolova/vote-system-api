@@ -15,7 +15,7 @@
 <section class="jumbotron text-center">
     <div class="container">
         <h1 class="jumbotron-heading" th:text="#{restaurant.title}"></h1>
-        <p>
+        <p th:if="${userRole.equals('ADMIN')}">
             <a th:href="@{/restaurants/add}" class="btn btn-md btn-outline-secondary"
                th:text="#{restaurant.add}"></a>
         </p>

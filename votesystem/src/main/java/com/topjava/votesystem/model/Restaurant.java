@@ -13,18 +13,15 @@ import java.util.List;
 public class Restaurant {
     public static final int START_SEQ_RESTAURANT = 100000;
     @Id
-    @SequenceGenerator(name = "global_seq_restaurants", sequenceName = "global_seq_restaurants", allocationSize = 1, initialValue = START_SEQ_RESTAURANT)
+    @SequenceGenerator(name = "global_seq_restaurants",
+            sequenceName = "global_seq_restaurants",
+            allocationSize = 1,
+            initialValue = START_SEQ_RESTAURANT)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq_restaurants")
     private Long id;
 
     @Column(name = "name", unique = true)
     private String name;
-
-    @Column(name = "voices")
-    private int countVoices = 0;
-
-    @Column(name = "datetime_last_vote", columnDefinition = "timestamp default now()")
-    private LocalDateTime dateTimeLastVote;
 
     @Column(name = "registered", columnDefinition = "timestamp default now()")
     private LocalDateTime registered = LocalDateTime.now();
@@ -38,8 +35,8 @@ public class Restaurant {
     }
 
     public Restaurant(String name) {
-       this.name = name;
-       this.registered = LocalDateTime.now();
+        this.name = name;
+        this.registered = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -62,22 +59,6 @@ public class Restaurant {
         return this.id == null;
     }
 
-    public int getCountVoices() {
-        return countVoices;
-    }
-
-    public void setCountVoices(int countVoices) {
-        this.countVoices = countVoices;
-    }
-
-    public LocalDateTime getDateTimeLastVote() {
-        return dateTimeLastVote;
-    }
-
-    public void setDateTimeLastVote(LocalDateTime dateTimeLastVote) {
-        this.dateTimeLastVote = dateTimeLastVote;
-    }
-
     public LocalDateTime getRegistered() {
         return registered;
     }
@@ -88,6 +69,16 @@ public class Restaurant {
 
     public void setDishes(List<Dish> dishes) {
         this.dishes = dishes;
+    }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", registered=" + registered.toString() +
+                ", dishes=" + dishes.toString() +
+                '}';
     }
 }
 

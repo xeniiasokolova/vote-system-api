@@ -66,7 +66,7 @@ public class RestaurantService {
      *
      * @param restaurant - data for update
      * @param id         - restaurant id for update
-     * @return  true - the restaurant is updated, false - not updated
+     * @return true - the restaurant is updated, false - not updated
      */
     public boolean update(Restaurant restaurant, long id) {
         try {

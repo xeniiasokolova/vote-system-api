@@ -1,4 +1,4 @@
-// Function for restaurant update
+// Function for restaurant update or create
 function updateOrCreateRestaurant(formId, method) {
 
  document.getElementById(formId).addEventListener("submit", function (event) {
@@ -13,7 +13,7 @@ function updateOrCreateRestaurant(formId, method) {
 
         // Sending form data to the server
         fetch(this.action, {
-            method: method, // Используйте метод PUT
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
