@@ -1,0 +1,17 @@
+.error-message {
+    border: 2px solid rgba(241, 80, 80, 0.93);
+    padding: 10px;
+    background-color: rgba(250, 182, 192, 0.99);
+    text-align: center;
+}
+
+.success-message {
+    border: 2px solid rgba(241, 214, 80, 0.93);
+    padding: 10px;
+    background-color: rgba(250, 241, 182, 0.99);
+    text-align: center;
+}
+
+.text-center {
+    text-align: center;
+}

@@ -14,7 +14,10 @@ public class Dish {
     public static final int START_SEQ_DISH = 100000;
 
     @Id
-    @SequenceGenerator(name = "global_seq_dishes", sequenceName = "global_seq_dishes", allocationSize = 1, initialValue = START_SEQ_DISH)
+    @SequenceGenerator(name = "global_seq_dishes",
+                        sequenceName = "global_seq_dishes",
+                        allocationSize = 1,
+                        initialValue = START_SEQ_DISH)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq_dishes")
     private Long id;
 
@@ -35,8 +38,8 @@ public class Dish {
     @Column(name = "price", nullable = false)
     private Float price;
 
-    @Column(name = "registered")
-    private LocalDateTime registered;
+    @Column(name = "registered", columnDefinition = "timestamp default now()")
+    private LocalDateTime registered = LocalDateTime.now();
 
 
     public Dish() {
@@ -47,7 +50,7 @@ public class Dish {
         this.restaurant = restaurant;
     }
 
-    public Dish(Restaurant restaurant, String name, String description, Float price) {
+    public Dish(String name, Restaurant restaurant, String description, Float price) {
         this.name = name;
         this.restaurant = restaurant;
         this.description = description;
@@ -109,7 +112,6 @@ public class Dish {
     }
 
 
-
     @Override
     public String toString() {
         return "Dish{" +
@@ -117,10 +119,9 @@ public class Dish {
                 ", name='" + name + '\'' +
                 ", restaurant=" + restaurant +
                 ", description='" + description + '\'' +
-                ", price=" + price.toString() +
+                ", price=" + price +
                 ", registered=" + registered.toString() +
                 '}';
     }
-
 
 }

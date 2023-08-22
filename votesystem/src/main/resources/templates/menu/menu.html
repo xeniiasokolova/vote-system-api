@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/errors.css">
+
+    <title th:text="#{menu.title}"></title>
+
+    <div th:insert="blocks/modal :: #confirmVoteModal"></div>
+</head>
+
+<body>
+<!-- Header and styles -->
+<div th:insert="blocks/header :: header"></div>
+
+<!-- Link to add a dish -->
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading" th:text="#{menu.name}"></h1>
+        <h1 class="jumbotron-heading" th:text="${restaurant.name}"></h1>
+        <p th:if="${userRole.equals('ADMIN')}">
+            <a th:href="@{/restaurants/{id}/menu/add(id=${restaurant.id})}" class="btn btn-md btn-outline-secondary"
+               th:text="#{dish.add}"></a>
+        </p>
+    </div>
+</section>
+
+<div class="container" align="center">
+    <!-- Error if limited time ended -->
+    <div th:if="${voteError}" th:text="#{error.vote}"
+         class="py-2 alert alert-danger error-message"></div>
+</div>
+
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <!-- Displaying a list of dishes -->
+            <div th:each="dish : ${dishes}" class="col-md-4">
+                <!-- Displays of each dish -->
+                <div class="card mb-4 rounded-3 shadow-sm border-secondary">
+
+                    <!-- Dish name -->
+                    <div class="card-header py-3 text-bg-secondary border-secondary">
+                        <h4 class="my-0 fw-normal" th:text="${dish.name}"></h4>
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- Dish price -->
+                        <div class="card-title pricing-card-title">
+                            <h1 class="d-inline-flex"
+                                th:text="${T(com.topjava.votesystem.util.NumberUtil).formatDecimal(dish?.price)}"></h1>
+                            <h1 class="d-inline-flex" th:text="#{dish.price.currency}"></h1>
+                        </div>
+
+                        <!-- Dish description -->
+                        <p class="card-text" th:text="${dish.description}"></p>
+
+                        <p class="text-end">
+                            <small class="text-muted"
+                                   th:text="${#temporals.format(dish.registered, 'dd-MM-yyyy HH:mm')}"></small>
+                        </p>
+
+                        <!-- Vote button -->
+                        <div th:if="${userRole.equals('USER')}">
+                        <form id="voteForm" method="POST"
+                              th:action="@{/rest/restaurants/{restaurantId}/menu/{dishId}(restaurantId=${restaurant.id}, dishId=${dish.id})}">
+
+                            <!-- Added a hidden field for changing the vote -->
+                            <input type="hidden" name="restaurantId" id="restaurantId" th:value="${restaurant.id}">
+                            <input type="hidden" name="dishId" id="dishId" th:value="${dish.id}">
+                            <input type="hidden" name="voteConfirmation" id="voteConfirmation"
+                                   th:value="${voteConfirmation}">
+                            <input type="hidden" id="voteError" name="voteError" th:value="${voteError}">
+
+
+                            <button class="w-100 btn btn-lg btn-secondary vote-button"
+                                    type="submit"
+                                    th:disabled="${(voteError ?: false)}"
+                                    th:text="#{dish.vote}"
+                                    th:attr="data-dish-id=${dish.id},
+                                             data-restaurant-id=${restaurant.id},
+                                             data-vote-confirmation=${voteConfirmation},
+                                             data-vote-error=${voteError}">
+                            </button>
+                        </form>
+                    </div>
+
+                        <!-- Buttons for: displaying the updating and deleting dish information -->
+                        <div th:if="${userRole.equals('ADMIN')}"
+                             class="d-flex justify-content-between align-items-center">
+
+                            <a class="btn btn-outline-secondary d-inline-flex align-items-center"
+                               th:href="@{/restaurants/{id}/menu/update/{dishId}(dishId=${dish.id}, id=${dish.restaurant.id})}"
+                               th:text="#{common.update}">
+                            </a>
+
+                            <a th:href="@{/rest/restaurants/{id}/menu/{dishId}(id=${restaurant.id}, dishId=${dish.id})}"
+                               class="btn btn-outline-secondary d-inline-flex align-items-center delete-dish-button"
+                               th:attr="data-dish-id=${dish.id}, data-restaurant-id=${restaurant.id}"
+                               th:text="#{common.delete}"></a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/js/menu.js">
+</script>
+
+</body>
+</html>

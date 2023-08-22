@@ -1,43 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:c="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="UTF-8"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
-    <title th:text="#{restaurant.title}"></title>
+
+    <title th:text="#{dish.edit}"></title>
 </head>
 <body>
+<!-- Header and styles -->
 <div th:insert="blocks/header :: header"></div>
 
-
 <div class="container" align="center">
-    <form action="save" method="post">
 
-        <div class="py-2 text-center">
-            <h3 th:if="${dish.isNew()}" th:text="#{dish.add}"></h3>
-            <h3 th:unless="${dish.isNew()}" th:text="#{dish.edit}"></h3>
-        </div>
+    <div class="py-2">
+        <h3 th:text="#{dish.edit}"></h3>
+    </div>
 
-        <div class="col-md-3">
-            <input type="hidden" class="form-control"
-                   id="id" name="id"
-                   placeholder="ID"
-                   th:value="${dish.id}" required="">
-        </div>
+    <!-- Form to update dish data -->
+    <form id="updateDish" method="PUT" th:object="${dish}"
+          th:action="@{/rest/restaurants/{id}/menu/{dishId}(id=${dish.restaurant.id}, dishId=${dish.id})}">
 
         <div class="col-md-3">
             <input type="hidden" class="form-control"
-                   id="restaurantid" name="restaurantid"
+                   name="restaurantId" id="restaurantId"
                    placeholder="Restaurant ID"
-                   th:value="${dish.restaurant.id}" required="">
+                   th:value="${dish.restaurant.id}">
+        </div>
+
+        <div class="col-md-3">
+            <input type="hidden" class="form-control"
+                   name="dishId" id="dishId"
+                   placeholder="Dish ID"
+                   th:value="${dish.id}">
         </div>
 
         <div class="col-md-3 py-2">
             <input type="text" class="form-control"
-                   id="name" name="name"
+                   name="name" id="name"
                    th:placeholder="#{dish.name}"
-                   th:value="${dish.name}" required="">
+                   th:value="${dish.name}" required>
         </div>
 
         <div class="col-md-3 py-2">
@@ -57,16 +59,23 @@
         </div>
 
         <div class="d-flex gap-2 justify-content-center py-2">
-            <button class="btn secondary d-inline-flex align-items-center"
-                    type="button" onclick="window.history.back()"
-                    th:text="#{common.cancel}">
-            </button>
+            <!-- Cancel actions -->
+            <a th:href="@{/restaurants/{id}/menu(id=${dish.restaurant.id})}"
+               th:text="#{common.cancel}"
+               class="btn secondary d-inline-flex align-items-center"></a>
+            <!-- Save the dish -->
             <button class="btn btn-secondary d-inline-flex align-items-center"
                     type="submit"
+                    onclick="updateOrCreateDish('updateDish', 'PUT')"
                     th:text="#{common.save}">
             </button>
         </div>
+
     </form>
 </div>
+
+<script type="text/javascript" src="/js/menu.js" defer>
+</script>
+
 </body>
 </html>

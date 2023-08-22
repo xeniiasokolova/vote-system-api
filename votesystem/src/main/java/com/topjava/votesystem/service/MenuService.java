@@ -25,9 +25,10 @@ public class MenuService {
     private static final Logger log = LoggerFactory.getLogger(MenuService.class);
 
     /**
-     * Создание нового блюда
-     * @param dish - блюдо, которое будем добавлять
-     * @return созданное блюдо
+     * Creating a new dish
+     *
+     * @param dish - dish to be added
+     * @return created dish
      */
     @Transactional
     public Dish create(Dish dish) {
@@ -35,43 +36,62 @@ public class MenuService {
         return repository.save(dish);
     }
 
+
     /**
-     * Получение всех блюд
-     * @return список всех блюд, без исключений
+     * Retrieve all dishes
+     *
+     * @return list of all dishes, no exceptions
      */
-    public List<Dish> readAll() {
+    public List<Dish> getAll() {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     /**
-     * Получить ресторан по id
-     * @param id - идентификатор
-     * @return блюдо
+     * Get restaurant by id
+     *
+     * @param id - identity
+     * @return dish
      */
-    public Dish read(Long id) {
+    public Dish get(Long id) {
         return repository.findById(id).get();
     }
 
     /**
-     * Обновить блюдо по id
-     * @param dish - блюдо
-     * @param id - идентификатор
+     * Update dish by id
+     *
+     * @param dish - dish
+     * @param id   - identity
      */
-    public void update(Dish dish, Long id) {
-        dish.setId(id);
+    public boolean update(Dish dish, Long id) {
         log.info("update {} with id={}", dish, id);
-        repository.save(dish);
+        try {
+            Dish dishOld = get(id);
+            dishOld.setName(dish.getName());
+            dishOld.setDescription(dish.getDescription());
+            dishOld.setPrice(dish.getPrice());
+            repository.save(dishOld);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
-     * Удалить блюдо по id
-     * @param id - идентификатор
+     * Remove dish by id
+     *
+     * @param id - identity
      */
     public void delete(Long id) {
         log.info("delete {}", id);
         repository.deleteById(id);
     }
 
+    /**
+     * Remove all dishes by restaurant
+     *
+     * @param restaurant - restaurant
+     */
     public void deleteByRestaurant(Restaurant restaurant) {
         log.info("delete by restaurant = {}", restaurant);
         if (!restaurant.getDishes().isEmpty()) {
@@ -80,7 +100,13 @@ public class MenuService {
 
     }
 
-
-
+    /**
+     * Get all dishes by restaurant id
+     *
+     * @param id - identity
+     */
+    public List<Dish> getDishesByRestaurantId(Long id) {
+        return repository.getDishesByRestaurantId(id);
+    }
 
 }
