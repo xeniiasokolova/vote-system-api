@@ -36,13 +36,13 @@
         <h2 class="form-signin-heading text-center" th:text="#{sign.title}"></h2>
 
         <!-- Username errors -->
-        <p th:if="${usernameExists}"  th:text="#{error.username.exists}" class="error-message"></p>
+        <p th:if="${usernameExists}"  th:text="#{error.username.exists}" class="error-message text-center"></p>
         <!-- Email errors -->
-        <p th:if="${emailExists}"  th:text="#{user.email.exists}" class="error-message"></p>
-        <p th:if="${emailError}" th:text="#{${emailError}}" class="error-message"></p>
+        <p th:if="${emailExists}"  th:text="#{user.email.exists}" class="error-message text-center"></p>
+        <p th:if="${emailError}" th:text="#{${emailError}}" class="error-message text-center" ></p>
         <!-- Passwords errors -->
-        <p th:if="${passwordMatchError}" th:text="#{${passwordMatchError}}" class="error-message"></p>
-        <p th:if="${passwordLengthError}" th:text="#{${passwordLengthError}}" class="error-message"></p>
+        <p th:if="${passwordMatchError}" th:text="#{${passwordMatchError}}" class="error-message text-center"></p>
+        <p th:if="${passwordLengthError}" th:text="#{${passwordLengthError}}" class="error-message text-center"></p>
 
         <p>
             <input type="text" id="firstName" name="firstName" class="form-control"

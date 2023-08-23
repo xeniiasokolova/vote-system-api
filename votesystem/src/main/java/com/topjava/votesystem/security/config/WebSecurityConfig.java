@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.topjava.votesystem.service.UserService;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @Configuration
@@ -29,20 +28,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                //Доступ только для не зарегистрированных пользователей
+                //Access for non-registered users only
                 .antMatchers("/registration").permitAll()
-                //Доступ только для пользователей с ролью Администратор
+                //Access only for users with the Administrator role
                 .antMatchers("/login").permitAll()
-                //Все остальные страницы требуют аутентификации
+                //All other pages require authentication
                 .anyRequest().authenticated()
                 .and()
-                //Настройка для входа в систему
+                //Setup for logging in
                 .formLogin()
                 .loginPage("/login")
                 .failureForwardUrl("/login")
-                //Перенарпавление на главную страницу после успешного входа
+                //Redirection to the main page after successful login
                 .defaultSuccessUrl("/restaurants")
-                 .permitAll()
+                .permitAll()
                 .and()
                 .logout()
                 .permitAll()

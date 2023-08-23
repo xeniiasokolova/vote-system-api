@@ -7,11 +7,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping(path = "/registration")
 @AllArgsConstructor
 public class RegistrationController {
@@ -21,41 +20,40 @@ public class RegistrationController {
     private final String REGISTRATION_TEMPLATE = "registration";
 
     @GetMapping
-    public ModelAndView registration(Model model) {
+    public String registration(Model model) {
         model.addAttribute("newUser", new User());
 
-        return new ModelAndView(REGISTRATION_TEMPLATE);
+        return REGISTRATION_TEMPLATE;
     }
 
     @PostMapping
-    public ModelAndView addUser(@ModelAttribute("newUser") @Valid User newUser, Model model) {
+    public String addUser(@ModelAttribute("newUser") @Valid User newUser, Model model) {
 
         if (userService.isExistsUserByUsername(newUser)) {
             UserHandler.usernameError(model);
-            return new ModelAndView(REGISTRATION_TEMPLATE);
+            return REGISTRATION_TEMPLATE;
         }
 
         if (userService.isExistsUserByEmail(newUser)) {
             UserHandler.emailError(model);
-            return new ModelAndView(REGISTRATION_TEMPLATE);
+            return REGISTRATION_TEMPLATE;
         }
 
         if (newUser.getPassword().length() < 5) {
             UserHandler.passwordLengthError(model);
-            return new ModelAndView(REGISTRATION_TEMPLATE);
+            return REGISTRATION_TEMPLATE;
         }
 
         if (!newUser.getPassword().equals(newUser.getPasswordConfirm())) {
             UserHandler.passwordMatchError(model);
-            return new ModelAndView(REGISTRATION_TEMPLATE);
+            return REGISTRATION_TEMPLATE;
         }
 
         if (!userService.signUpUser(newUser)) {
             UserHandler.emailInvalidError(model);
-            return new ModelAndView(REGISTRATION_TEMPLATE);
+            return REGISTRATION_TEMPLATE;
         }
 
-        return new ModelAndView("redirect:/login");
+        return "redirect:/login";
     }
-
 }
