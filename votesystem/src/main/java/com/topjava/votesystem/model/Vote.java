@@ -14,7 +14,10 @@ public class Vote {
 
     public static final int START_SEQ_VOTE = 100000;
     @Id
-    @SequenceGenerator(name = "global_seq_votes", sequenceName = "global_seq_votes", allocationSize = 1, initialValue = START_SEQ_VOTE)
+    @SequenceGenerator(name = "global_seq_votes",
+            sequenceName = "global_seq_votes",
+            allocationSize = 1,
+            initialValue = START_SEQ_VOTE)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq_votes")
     private Long id;
 
@@ -41,5 +44,16 @@ public class Vote {
         this.restaurant = restaurant;
         this.dish = dish;
         this.voteDateTime = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Vote{" +
+                "id=" + id +
+                ", user=" + user.toString() +
+                ", restaurant=" + restaurant.toString() +
+                ", dish=" + dish.toString() +
+                ", voteDateTime=" + voteDateTime.toString() +
+                '}';
     }
 }

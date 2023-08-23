@@ -16,20 +16,32 @@ public class VoteAbstractController extends BaseController {
     @Autowired
     private VoteService service;
 
-
-    //get vote by id
+    /**
+     * Get vote by id
+     *
+     * @param id - vote's identity
+     * @return vote
+     */
     public Vote get(long id) {
         log.info("get vote {}", id);
         return service.get(id);
     }
 
-    //delete vote
+    /**
+     * Delete vote
+     *
+     * @param id - vote's identity
+     */
     public void delete(long id) {
         log.info("delete vote {}", id);
         service.delete(id);
     }
 
-    //get all votes
+    /**
+     * Get all votes
+     *
+     * @return list of all votes
+     */
     public List<Vote> getAll() {
         log.info("get all votes");
         return service.getAll();

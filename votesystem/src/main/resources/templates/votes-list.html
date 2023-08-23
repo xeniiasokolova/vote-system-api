@@ -38,6 +38,7 @@
                 <td th:text="${#temporals.format(vote.voteDateTime, 'dd-MM-yyyy HH:mm:ss')}"></td>
 
                 <td>
+
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                             <a th:href="@{/rest/votes/{id}(id=${vote.id})}"

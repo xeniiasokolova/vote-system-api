@@ -1,8 +1,6 @@
 package com.topjava.votesystem.controller.votes;
 
 
-import com.topjava.votesystem.controller.restaurant.RestaurantRestController;
-import com.topjava.votesystem.model.Restaurant;
 import com.topjava.votesystem.model.Vote;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
